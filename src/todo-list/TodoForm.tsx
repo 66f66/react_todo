@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { useTodoQuery } from '@/hooks/use-todo-query'
 import { Todo } from '@/lib/types'
 import { createTodo, updateTodo } from '@/service/todo.service'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -55,13 +56,12 @@ export const TodoForm: FC<TodoFormProps> = ({ setOpen, id, intialValue }) => {
   })
 
   const queryClient = useQueryClient()
+  const { todosQuery } = useTodoQuery()
 
   const createMutation = useMutation({
     mutationFn: createTodo,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['todos'],
-      })
+    onSuccess: async () => {
+      await todosQuery.refetch()
 
       setOpen(false)
     },
@@ -73,8 +73,8 @@ export const TodoForm: FC<TodoFormProps> = ({ setOpen, id, intialValue }) => {
 
   const updateMutation = useMutation({
     mutationFn: updateTodo,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ['todos'],
       })
 
