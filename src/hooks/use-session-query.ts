@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 export const useSessionQuery = () => {
   const sessionQuery = useQuery({
     enabled: isAuthenticated,
-    queryKey: ['users', 'me'],
+    queryKey: ['session'],
     queryFn: fetchSession,
     staleTime: 1000 * 60 * 30, // 30분
     retry: 1,
