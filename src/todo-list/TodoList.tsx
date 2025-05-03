@@ -35,7 +35,7 @@ export const TodoList: FC = () => {
     [queryClient],
   )
 
-  const moveTodoMutation = useMutation({
+  const updateOrderMutation = useMutation({
     mutationFn: updateTodoOrderNumber,
     onError: async () => {
       await queryClient.invalidateQueries({
@@ -46,7 +46,7 @@ export const TodoList: FC = () => {
   })
 
   const handleDrop = async (todoId: number, newOrderNumber: number) => {
-    moveTodoMutation.mutate({ todoId, newOrderNumber })
+    updateOrderMutation.mutate({ todoId, newOrderNumber })
   }
 
   if (isLoading) {
@@ -72,7 +72,7 @@ export const TodoList: FC = () => {
   if (!data) {
     return (
       <div className='container m-2 mx-auto flex min-h-[calc(100vh-210px)] max-w-6xl items-center justify-center gap-2 p-2'>
-        <span className='text-muted-foreground'>
+        <span className='text-muted-foreground text-lg'>
           데이터를 가져오지 못했습니다.
         </span>
       </div>
@@ -82,16 +82,21 @@ export const TodoList: FC = () => {
   if (data.content.length === 0) {
     return (
       <div className='container m-2 mx-auto flex min-h-[calc(100vh-210px)] max-w-6xl items-center justify-center gap-2 p-2'>
-        <span className='text-muted-foreground'>
-          아직 작업이 없습니다. 작업을 추가해보세요.
-        </span>
-        <CreateTodo />
+        <div className='flex flex-col gap-2'>
+          <span className='text-muted-foreground text-lg'>
+            아직 작업이 없습니다. 작업을 추가해보세요.
+          </span>
+          <CreateTodo />
+        </div>
       </div>
     )
   }
 
   return (
     <div className='container m-2 mx-auto min-h-[calc(100vh-210px)] max-w-6xl p-2'>
+      <div className='mx-auto my-4 flex flex-col md:w-1/4'>
+        <CreateTodo />
+      </div>
       <DndProvider backend={HTML5Backend}>
         <Masonry
           breakpointCols={{

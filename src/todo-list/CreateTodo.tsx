@@ -19,12 +19,7 @@ export const CreateTodo = () => {
       onOpenChange={setOpen}
     >
       <DialogTrigger asChild>
-        <Button
-          variant='outline'
-          className='hover:cursor-pointer'
-        >
-          새 작업
-        </Button>
+        <Button className='hover:cursor-pointer'>새 작업</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

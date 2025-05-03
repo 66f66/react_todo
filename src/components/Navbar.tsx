@@ -1,9 +1,9 @@
 import { useSessionQuery } from '@/hooks/use-session-query'
 import { signOut } from '@/service/user.service'
-import { CreateTodo } from '@/todo-list/CreateTodo'
 import { FC } from 'react'
 import { Link } from 'react-router'
 import { Button } from './ui/button'
+import { Input } from './ui/input'
 
 export const Navbar = () => {
   return (
@@ -16,11 +16,25 @@ export const Navbar = () => {
           Home
         </Link>
 
-        <div className='flex items-center justify-center gap-4'>
-          <UserButton />
-        </div>
+        <TodoSearch />
+
+        <UserButton />
       </nav>
     </header>
+  )
+}
+
+const TodoSearch: FC = () => {
+  const { sessionQuery } = useSessionQuery()
+
+  if (sessionQuery.isLoading || !sessionQuery.data) {
+    return
+  }
+
+  return (
+    <form>
+      <Input placeholder='검색어를 입력해보세요.' />
+    </form>
   )
 }
 
@@ -38,14 +52,13 @@ const UserButton: FC = () => {
   }
 
   return (
-    <>
+    <div className='flex items-center justify-center gap-4'>
       {!sessionQuery.data ? (
         <Button asChild>
           <Link to='/sign-in'>로그인</Link>
         </Button>
       ) : (
         <div className='flex items-center justify-center gap-2'>
-          <CreateTodo />
           <Button
             onClick={handleSignOut}
             className='hover:cursor-pointer'
@@ -54,6 +67,6 @@ const UserButton: FC = () => {
           </Button>
         </div>
       )}
-    </>
+    </div>
   )
 }
