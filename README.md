@@ -6,8 +6,8 @@
 
 ## 주요 기술 스택
 
-- PostgresSQL, JPA, MyBatis, Spring Boot, Render
-- tanstack-query, React, TailwindCSS, Shadcn UI, Docker, Netlify
+- PostgresSQL, JPA, MyBatis, Spring Boot, Docker, Render
+- tanstack-query, React, TailwindCSS, Shadcn UI, Netlify
 
 ## 주요 기능
 
