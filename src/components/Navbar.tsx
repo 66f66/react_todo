@@ -1,5 +1,7 @@
 import { useSessionQuery } from '@/hooks/use-session-query'
+import { useTodoQuery } from '@/hooks/use-todo-query'
 import { signOut } from '@/service/user.service'
+import { Loader } from 'lucide-react'
 import { FC } from 'react'
 import { Link } from 'react-router'
 import { TodoSearch } from './TodoSearch'
@@ -8,19 +10,45 @@ import { Button } from './ui/button'
 export const Navbar = () => {
   return (
     <header className='fixed top-0 z-50 w-full bg-white/80 shadow-sm backdrop-blur-sm'>
-      <nav className='mx-auto flex min-h-[70px] max-w-6xl items-center justify-between px-4 py-4'>
-        <Link
-          to='/'
-          className='text-xl font-bold'
-        >
-          Home
-        </Link>
+      <nav className='mx-auto grid min-h-[70px] max-w-6xl grid-cols-4 px-4 py-4'>
+        <div>
+          <Link
+            to='/'
+            className='text-xl font-bold'
+          >
+            Home
+          </Link>
+        </div>
 
-        <TodoSearch />
+        <div className='col-span-2'>
+          <TodoSearch />
+        </div>
 
-        <UserButton />
+        <div className='flex items-center justify-end gap-2'>
+          <TodosStatus />
+          <UserButton />
+        </div>
       </nav>
     </header>
+  )
+}
+
+const TodosStatus: FC = () => {
+  const {
+    todosQuery: { isFetching },
+  } = useTodoQuery()
+  const {
+    sessionQuery: { isLoading },
+  } = useSessionQuery()
+
+  if (!isFetching || isLoading) {
+    return null
+  }
+
+  return (
+    <div>
+      <Loader />
+    </div>
   )
 }
 

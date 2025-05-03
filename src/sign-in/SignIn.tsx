@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useSessionQuery } from '@/hooks/use-session-query'
 import { signIn } from '@/service/user.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -27,15 +28,13 @@ export const SignIn: FC = () => {
 
   const queryClient = useQueryClient()
 
+  const { sessionQuery } = useSessionQuery()
   const navigate = useNavigate()
-
   const signInMutation = useMutation({
     mutationFn: signIn,
 
     onSuccess: () => {
-      queryClient.fetchQuery({
-        queryKey: ['users', 'me'],
-      })
+      sessionQuery.refetch()
 
       queryClient.invalidateQueries({
         queryKey: ['todos'],

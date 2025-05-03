@@ -45,6 +45,11 @@ export const TodoList: FC = () => {
 
   const updateOrderMutation = useMutation({
     mutationFn: updateTodoOrderNumber,
+    onSuccess: async () => {
+      queryClient.invalidateQueries({
+        queryKey: ['todos'],
+      })
+    },
     onError: async () => {
       await queryClient.invalidateQueries({
         queryKey: ['todos'],
