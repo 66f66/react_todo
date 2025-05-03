@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import { AuthenticatedRoute } from './components/AuthenticatedRoute'
 import { Navbar } from './components/Navbar'
+import { NotFound } from './components/NotFound'
 import { SignIn } from './sign-in/SignIn'
 import { SignUp } from './sign-up/SignUp'
 import { TodoList } from './todo-list/TodoList'
@@ -31,6 +32,10 @@ function App() {
             <Route
               path='/sign-in'
               element={<SignIn />}
+            />
+            <Route
+              path='*'
+              element={<NotFound />}
             />
           </Routes>
         </main>
