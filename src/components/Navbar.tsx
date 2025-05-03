@@ -2,8 +2,8 @@ import { useSessionQuery } from '@/hooks/use-session-query'
 import { signOut } from '@/service/user.service'
 import { FC } from 'react'
 import { Link } from 'react-router'
+import { TodoSearch } from './TodoSearch'
 import { Button } from './ui/button'
-import { Input } from './ui/input'
 
 export const Navbar = () => {
   return (
@@ -21,20 +21,6 @@ export const Navbar = () => {
         <UserButton />
       </nav>
     </header>
-  )
-}
-
-const TodoSearch: FC = () => {
-  const { sessionQuery } = useSessionQuery()
-
-  if (sessionQuery.isLoading || !sessionQuery.data) {
-    return
-  }
-
-  return (
-    <form>
-      <Input placeholder='검색어를 입력해보세요.' />
-    </form>
   )
 }
 

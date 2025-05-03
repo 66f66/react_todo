@@ -3,20 +3,28 @@ import { useTodoQuery } from '@/hooks/use-todo-query'
 import { Page, Todo } from '@/lib/types'
 import { updateTodoOrderNumber } from '@/service/todo.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback, type FC } from 'react'
+import { useCallback, useEffect, type FC } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Masonry from 'react-masonry-css'
+import { useLocation, useSearchParams } from 'react-router'
 import { CreateTodo } from './CreateTodo'
 import { TodoItem } from './TodoItem'
 
 export const TodoList: FC = () => {
+  const [searchParams] = useSearchParams()
+
   const {
     todosQuery: { isLoading, data, refetch },
   } = useTodoQuery()
 
-  const queryClient = useQueryClient()
+  const location = useLocation()
 
+  useEffect(() => {
+    refetch()
+  }, [location, refetch])
+
+  const queryClient = useQueryClient()
   const moveTodo = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
@@ -84,7 +92,9 @@ export const TodoList: FC = () => {
       <div className='container m-2 mx-auto flex min-h-[calc(100vh-210px)] max-w-6xl items-center justify-center gap-2 p-2'>
         <div className='flex flex-col gap-2'>
           <span className='text-muted-foreground text-lg'>
-            아직 작업이 없습니다. 작업을 추가해보세요.
+            {searchParams.get('search')
+              ? '검색 결과가 없습니다.'
+              : '아직 작업이 없습니다. 작업을 추가해보세요.'}
           </span>
           <CreateTodo />
         </div>
