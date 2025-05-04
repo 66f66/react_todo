@@ -15,7 +15,7 @@ export const TodoSearch: FC = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      setSearchParams({ search: searchTerm })
+      setSearchParams({ search: encodeURIComponent(searchTerm) })
     } else {
       setSearchParams()
     }

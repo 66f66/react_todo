@@ -20,7 +20,7 @@ export const signUp = async (user: Partial<User>) => {
 }
 
 export const existsUsername = async (username: string) => {
-  const url = `${USER_BASE_URL}/exists?q=${username}`
+  const url = `${USER_BASE_URL}/exists?q=${encodeURIComponent(username)}`
 
   const response = await customFetch(url, {
     method: 'GET',
