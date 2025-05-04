@@ -101,7 +101,7 @@ export const TodoList: FC = () => {
               ? '검색 결과가 없습니다.'
               : '아직 작업이 없습니다. 작업을 추가해보세요.'}
           </span>
-          <CreateTodo />
+          {searchParams.get('search') || <CreateTodo />}
         </div>
       </div>
     )
