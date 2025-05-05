@@ -25,6 +25,7 @@ export const TodoList: FC = () => {
   }, [location, refetch])
 
   const queryClient = useQueryClient()
+
   const moveTodo = useCallback(
     (dragIndex: number, hoverIndex: number) => {
       queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
@@ -45,16 +46,32 @@ export const TodoList: FC = () => {
 
   const updateOrderMutation = useMutation({
     mutationFn: updateTodoOrderNumber,
-    onSuccess: async () => {
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
+
+      const previousTodos = queryClient.getQueryData<Page<Todo>>(['todos'])
+
+      if (previousTodos) {
+        const newData = {
+          ...previousTodos,
+          content: [...previousTodos.content],
+        }
+
+        queryClient.setQueryData(['todos'], newData)
+      }
+
+      return { previousTodos }
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.previousTodos) {
+        queryClient.setQueryData(['todos'], context.previousTodos)
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['todos'],
       })
-    },
-    onError: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['todos'],
-      })
-      refetch()
     },
   })
 

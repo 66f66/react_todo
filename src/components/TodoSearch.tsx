@@ -37,7 +37,6 @@ export const TodoSearch: FC = () => {
         placeholder='검색어를 입력해보세요.'
         value={searchTerm}
         onChange={handleChange}
-        className='search-input'
       />
     </div>
   )
