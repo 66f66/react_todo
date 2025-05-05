@@ -74,6 +74,8 @@ export const TodoForm: FC<TodoFormProps> = ({ setOpen, id, intialValue }) => {
     mutationFn: updateTodo,
     onSuccess: async () => {
       await todosQuery.refetch()
+
+      setOpen(false)
     },
     onError: (error) => {
       console.error(error.message)
