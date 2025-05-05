@@ -33,10 +33,10 @@ export const SignIn: FC = () => {
   const signInMutation = useMutation({
     mutationFn: signIn,
 
-    onSuccess: () => {
-      sessionQuery.refetch()
+    onSuccess: async () => {
+      await sessionQuery.refetch()
 
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ['todos'],
       })
 
