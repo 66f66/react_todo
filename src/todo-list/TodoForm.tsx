@@ -15,7 +15,7 @@ import { useTodoQuery } from '@/hooks/use-todo-query'
 import { Todo } from '@/lib/types'
 import { createTodo, updateTodo } from '@/service/todo.service'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -55,7 +55,6 @@ export const TodoForm: FC<TodoFormProps> = ({ setOpen, id, intialValue }) => {
         },
   })
 
-  const queryClient = useQueryClient()
   const { todosQuery } = useTodoQuery()
 
   const createMutation = useMutation({
@@ -74,11 +73,7 @@ export const TodoForm: FC<TodoFormProps> = ({ setOpen, id, intialValue }) => {
   const updateMutation = useMutation({
     mutationFn: updateTodo,
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['todos'],
-      })
-
-      setOpen(false)
+      await todosQuery.refetch()
     },
     onError: (error) => {
       console.error(error.message)
