@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { BrowserRouter, Route, Routes } from 'react-router'
+import { SignIn } from './app/SignIn'
+import { SignUp } from './app/SignUp'
+import { TodoList } from './app/todo-list/TodoList'
 import { AuthenticatedRoute } from './components/AuthenticatedRoute'
 import { Navbar } from './components/Navbar'
 import { NotFound } from './components/NotFound'
-import { SignIn } from './sign-in/SignIn'
-import { SignUp } from './sign-up/SignUp'
-import { TodoList } from './todo-list/TodoList'
 
 const queryClient = new QueryClient()
 
