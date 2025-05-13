@@ -43,6 +43,7 @@ export const signIn = async (user: Partial<User>) => {
   const response = await customFetch(url, {
     method: 'POST',
     body: JSON.stringify(user),
+    credentials: 'include',
   })
 
   if (!response.ok) {
@@ -53,7 +54,7 @@ export const signIn = async (user: Partial<User>) => {
 
   const data = await response.json()
 
-  storeAccessToken(data.token)
+  storeAccessToken(data.accessToken)
 }
 
 export const storeAccessToken = (token: string) => {
@@ -92,4 +93,11 @@ export const fetchSession = async () => {
 
 export const signOut = async () => {
   removeAccessToken()
+
+  const url = `${USER_BASE_URL}/sign-out`
+
+  await customFetch(url, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
 }

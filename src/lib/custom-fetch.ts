@@ -1,4 +1,5 @@
-import { getAccessToken } from '@/service/user.service'
+import { getAccessToken, storeAccessToken } from '@/service/user.service'
+import { API_URL } from './constatns'
 
 export const customFetch = async (
   url: string,
@@ -32,35 +33,34 @@ export const customFetch = async (
     return response
   }
 
-  // 401 에러 처리
-  if (response.status === 401) {
-    // 쿠키에서 리프레시 토큰 확인 (쿠키 존재 여부만 확인)
-    const refreshTokenExists = document.cookie.includes('refreshToken=')
+  if (accessToken) {
+    const refreshTokenUrl = `${API_URL}/users/refresh-token`
 
-    if (refreshTokenExists) {
-      // 리프레시 토큰으로 새 액세스 토큰 요청
-      const refreshResponse = await fetch('/api/auth/refresh', {
-        method: 'POST',
-        credentials: 'include', // 쿠키를 전송하기 위해 필요
-      })
+    // 리프레시 토큰으로 새 액세스 토큰 요청
+    const refreshResponse = await fetch(refreshTokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 쿠키를 전송하기 위해 필요
+    })
 
-      if (refreshResponse.ok) {
-        // 새 액세스 토큰 저장
-        const { accessToken: newAccessToken } = await refreshResponse.json()
-        localStorage.setItem('accessToken', newAccessToken)
+    if (refreshResponse.ok) {
+      // 새 액세스 토큰 저장
+      const { newAccessToken } = await refreshResponse.json()
+      storeAccessToken(newAccessToken)
 
-        // 원본 요청 재시도 (헤더 업데이트)
-        headers['Authorization'] = `Bearer ${newAccessToken}`
-        const retryOptions = {
-          ...mergedOptions,
-          headers,
-        }
-
-        return await fetch(url, retryOptions)
+      // 원본 요청 재시도 (헤더 업데이트)
+      headers['Authorization'] = `Bearer ${newAccessToken}`
+      const retryOptions = {
+        ...mergedOptions,
+        headers,
       }
+
+      return await fetch(url, retryOptions)
     }
 
-    // 리프레시 토큰이 유효하지 않거나 없으면 401 반환
+    // 액세스 토큰이 없거나 리프레시 토큰이 유효하지 않거나 없으면 401 반환
     return response
   }
 
