@@ -33,7 +33,7 @@ export const customFetch = async (
     return response
   }
 
-  if (accessToken) {
+  if (accessToken && response.status === 401) {
     const refreshTokenUrl = `${API_URL}/users/refresh-token`
 
     // 리프레시 토큰으로 새 액세스 토큰 요청
