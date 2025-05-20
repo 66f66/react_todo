@@ -64,6 +64,7 @@ export const SearchTodoList: FC = () => {
 
   return (
     <InfiniteScroll
+      style={{ minHeight: '100vh' }}
       dataLength={data.pages[0].totalElements}
       next={fetchNextPage}
       hasMore={hasNextPage}
