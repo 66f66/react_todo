@@ -9,6 +9,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import Masonry from 'react-masonry-css'
 import { useLocation, useSearchParams } from 'react-router'
 import { toast } from 'sonner'
+import { useDebouncedCallback } from 'use-debounce'
 import { TodoItem } from './TodoItem'
 
 export const TodoList: FC = () => {
@@ -73,14 +74,18 @@ export const TodoList: FC = () => {
     },
   })
 
-  const handleDrop = async () => {
+  const debouncedHandleDrop = useDebouncedCallback((todos: Todo[]) => {
+    mutation.mutate(
+      todos.map((todo, index) => ({
+        id: todo.id,
+        orderNumber: data ? data.totalElements - 1 - index : 0,
+      })),
+    )
+  }, 2000)
+
+  const handleDrop = () => {
     if (data) {
-      mutation.mutate(
-        data?.content.map((todo, index) => ({
-          id: todo.id,
-          orderNumber: data ? data.totalElements - 1 - index : 0,
-        })),
-      )
+      debouncedHandleDrop(data.content)
     }
   }
 
