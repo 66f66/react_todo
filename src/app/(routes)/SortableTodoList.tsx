@@ -163,7 +163,7 @@ export const SortableTodoList: FC = () => {
     <DndProvider backend={HTML5Backend}>
       <InfiniteScroll
         style={{ minHeight: '100vh' }}
-        dataLength={data.pages[0].totalElements}
+        dataLength={allTodos.length}
         next={fetchNextPage}
         hasMore={hasNextPage}
         loader={

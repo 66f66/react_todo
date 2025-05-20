@@ -5,18 +5,21 @@ import { Loader } from 'lucide-react'
 import { FC, useEffect } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
-import { useLocation } from 'react-router'
+import { useLocation, useSearchParams } from 'react-router'
 
 export const SearchTodoList: FC = () => {
   const location = useLocation()
 
+  const [searchParams] = useSearchParams()
+  const searchQuery = searchParams.get('q') || ''
+
   const {
     todosQuery: { isLoading, data, refetch, fetchNextPage, hasNextPage },
-  } = useTodosQuery()
+  } = useTodosQuery(searchQuery)
 
   useEffect(() => {
     refetch()
-  }, [location, refetch])
+  }, [location, refetch, searchParams])
 
   if (isLoading) {
     return (
@@ -65,7 +68,7 @@ export const SearchTodoList: FC = () => {
   return (
     <InfiniteScroll
       style={{ minHeight: '100vh' }}
-      dataLength={data.pages[0].totalElements}
+      dataLength={allTodos.length}
       next={fetchNextPage}
       hasMore={hasNextPage}
       loader={
