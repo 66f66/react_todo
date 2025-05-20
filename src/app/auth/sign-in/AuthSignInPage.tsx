@@ -55,7 +55,7 @@ export const AuthSignInPage: FC = () => {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutation.mutateAsync(values)
+    mutation.mutate(values)
   }
 
   return (

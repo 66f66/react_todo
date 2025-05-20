@@ -96,11 +96,9 @@ export const TodoFormDialog: FC<TodoFormProps> = ({
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (id) {
-      mutation.mutateAsync({ ...values, id })
-    } else {
-      mutation.mutateAsync(values)
-    }
+    const payload = id ? { ...values, id } : values
+
+    mutation.mutate(payload)
   }
 
   return (
