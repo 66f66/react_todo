@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useSessionQuery } from '@/hooks/use-session-query'
+import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
 import { signIn } from '@/service/user.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Lock } from 'lucide-react'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 const formSchema = z.object({
@@ -16,7 +16,11 @@ const formSchema = z.object({
   password: z.string().trim().nonempty(),
 })
 
-export const SignIn: FC = () => {
+export const AuthSignInPage: FC = () => {
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
+  const { authenticationQuery } = useAuthenticationQuery()
+
   const form = useForm<z.infer<typeof formSchema>>({
     mode: 'onChange',
     resolver: zodResolver(formSchema),
@@ -26,43 +30,41 @@ export const SignIn: FC = () => {
     },
   })
 
-  const queryClient = useQueryClient()
-
-  const { sessionQuery } = useSessionQuery()
-  const navigate = useNavigate()
-  const signInMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: signIn,
 
     onSuccess: async () => {
-      await sessionQuery.refetch()
-
       await queryClient.invalidateQueries({
         queryKey: ['todos'],
+      })
+
+      const result = await authenticationQuery.refetch()
+
+      toast('로그인 되었습니다', {
+        description: `반갑습니다, ${result.data?.nickname} 님 😊`,
       })
 
       navigate('/', { replace: true })
     },
 
     onError: (error) => {
-      alert(error.message)
+      toast('로그인 하지 못했습니다 😢', {
+        description: error.message,
+      })
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    signInMutation.mutateAsync(values)
+    mutation.mutateAsync(values)
   }
 
   return (
-    <div className='flex min-h-[calc(100vh-210px)] items-center justify-center'>
-      <div className='container max-w-[250px]'>
-        <div className='mb-4 flex items-center justify-center gap-1'>
-          <Lock
-            width={20}
-            height={20}
-          />
-          <h1>로그인</h1>
-        </div>
-        <Form {...form}>
+    <div className='container max-w-[250px]'>
+      <div className='mb-4 flex items-center justify-center gap-1'>
+        <h1>로그인</h1>
+      </div>
+      <Form {...form}>
+        <fieldset disabled={mutation.isPending}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className='flex flex-col gap-4'
@@ -101,23 +103,23 @@ export const SignIn: FC = () => {
             <Button
               type='submit'
               className='hover:cursor-pointer'
-              disabled={signInMutation.isPending || !form.formState.isValid}
+              disabled={mutation.isPending || !form.formState.isValid}
             >
               로그인
             </Button>
 
             <div className='text-muted-foreground text-center'>
-              아직 회원이 아니라면{' '}
+              아직 회원이 아니라면 <br />
               <Link
                 className='underline'
-                to={'/sign-up'}
+                to={'/auth/sign-up'}
               >
                 회원가입
               </Link>
             </div>
           </form>
-        </Form>
-      </div>
+        </fieldset>
+      </Form>
     </div>
   )
 }

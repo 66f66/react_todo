@@ -8,11 +8,15 @@ export type Page<T> = {
   number: number
 }
 
+export const ROLE = ['ROLE_ADMIN', 'ROLE_USER'] as const
+export type Role = (typeof ROLE)[number]
+
 export type User = {
   id: number
   username: string
   password: string
   nickname: string
+  role: Role
 }
 
 export type Todo = {
@@ -24,4 +28,9 @@ export type Todo = {
   createdAt: Date
   updatedAt: Date
   user: User
+}
+
+export type UpdateOrderNumberRequest = {
+  id: number
+  orderNumber: number
 }

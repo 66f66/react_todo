@@ -13,6 +13,7 @@ import { useMutation } from '@tanstack/react-query'
 import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 const formSchema = z.object({
@@ -41,7 +42,9 @@ const formSchema = z.object({
   }),
 })
 
-export const SignUp: FC = () => {
+export const AuthSignUpPage: FC = () => {
+  const navigate = useNavigate()
+
   const form = useForm<z.infer<typeof formSchema>>({
     mode: 'onBlur',
     resolver: zodResolver(formSchema),
@@ -52,31 +55,38 @@ export const SignUp: FC = () => {
     },
   })
 
-  const navigate = useNavigate()
-
-  const signUpMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: signUp,
 
     onSuccess: () => {
-      navigate('/sign-in', { replace: true })
+      toast('회원가입 되었습니다 🎉', {
+        action: {
+          label: '확인',
+          onClick: () => {},
+        },
+      })
+
+      navigate('/auth/sign-in', { replace: true })
     },
 
     onError: (error) => {
-      alert(error.message)
+      toast('회원가입 하지 못했습니다 😢', {
+        description: error.message,
+      })
     },
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    signUpMutation.mutate(values)
+    mutation.mutate(values)
   }
 
   return (
-    <div className='flex min-h-[calc(100vh-210px)] items-center justify-center'>
-      <div className='container max-w-[250px]'>
-        <div className='mb-4 flex items-center justify-center gap-1'>
-          <h1>회원가입</h1>
-        </div>
-        <Form {...form}>
+    <div className='container max-w-[250px]'>
+      <div className='mb-4 flex items-center justify-center gap-1'>
+        <h1>회원가입</h1>
+      </div>
+      <Form {...form}>
+        <fieldset disabled={mutation.isPending}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className='flex flex-col gap-4'
@@ -133,13 +143,13 @@ export const SignUp: FC = () => {
             <Button
               type='submit'
               className='hover:cursor-pointer'
-              disabled={signUpMutation.isPending || !form.formState.isValid}
+              disabled={mutation.isPending || !form.formState.isValid}
             >
               회원가입
             </Button>
           </form>
-        </Form>
-      </div>
+        </fieldset>
+      </Form>
     </div>
   )
 }

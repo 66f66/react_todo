@@ -1,11 +1,10 @@
-import { useSessionQuery } from '@/hooks/use-session-query'
-import { useTodoQuery } from '@/hooks/use-todo-query'
-import { signOut } from '@/service/user.service'
+import { SignedOut } from '@/components/common/SignedOut'
+import { UserButton } from '@/components/common/UserButton'
+import { useTodosQuery } from '@/hooks/use-todos-query'
 import { Loader } from 'lucide-react'
 import { FC } from 'react'
 import { Link } from 'react-router'
 import { TodoSearch } from './TodoSearch'
-import { Button } from './ui/button'
 
 export const Navbar = () => {
   return (
@@ -33,6 +32,9 @@ export const Navbar = () => {
 
         <div className='col-span-2 flex items-center justify-end gap-2'>
           <TodosStatus />
+          <SignedOut>
+            <Link to='/auth/sign-in'>로그인</Link>
+          </SignedOut>
           <UserButton />
         </div>
       </nav>
@@ -43,51 +45,15 @@ export const Navbar = () => {
 const TodosStatus: FC = () => {
   const {
     todosQuery: { isFetching },
-  } = useTodoQuery()
-  const {
-    sessionQuery: { isLoading },
-  } = useSessionQuery()
+  } = useTodosQuery()
 
-  if (!isFetching || isLoading) {
+  if (!isFetching) {
     return null
   }
 
   return (
     <div className='hidden md:inline'>
-      <Loader />
-    </div>
-  )
-}
-
-const UserButton: FC = () => {
-  const { sessionQuery } = useSessionQuery()
-
-  if (sessionQuery.isLoading) {
-    return
-  }
-
-  const handleSignOut = () => {
-    signOut()
-
-    window.location.reload()
-  }
-
-  return (
-    <div className='flex items-center justify-center gap-4'>
-      {!sessionQuery.data ? (
-        <Button asChild>
-          <Link to='/sign-in'>로그인</Link>
-        </Button>
-      ) : (
-        <div className='flex items-center justify-center gap-2'>
-          <Button
-            onClick={handleSignOut}
-            className='hover:cursor-pointer'
-          >
-            로그아웃
-          </Button>
-        </div>
-      )}
+      <Loader className='animate-spin' />
     </div>
   )
 }

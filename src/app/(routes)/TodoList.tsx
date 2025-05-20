@@ -1,30 +1,27 @@
 import { Skeleton } from '@/components/ui/skeleton'
-import { useTodoQuery } from '@/hooks/use-todo-query'
-import { Page, Todo } from '@/lib/types'
-import { updateTodoOrderNumber } from '@/service/todo.service'
+import { useTodosQuery } from '@/hooks/use-todos-query'
+import { Page, Todo } from '@/lib/types.lib'
+import { updateTodoOrders } from '@/service/todo.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useEffect, type FC } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Masonry from 'react-masonry-css'
 import { useLocation, useSearchParams } from 'react-router'
-import { CreateTodo } from './CreateTodo'
 import { TodoItem } from './TodoItem'
 
 export const TodoList: FC = () => {
+  const location = useLocation()
   const [searchParams] = useSearchParams()
+  const queryClient = useQueryClient()
 
   const {
     todosQuery: { isLoading, data, refetch },
-  } = useTodoQuery()
-
-  const location = useLocation()
+  } = useTodosQuery()
 
   useEffect(() => {
     refetch()
   }, [location, refetch])
-
-  const queryClient = useQueryClient()
 
   const moveTodo = useCallback(
     (dragIndex: number, hoverIndex: number) => {
@@ -44,30 +41,32 @@ export const TodoList: FC = () => {
     [queryClient],
   )
 
-  const updateOrderMutation = useMutation({
-    mutationFn: updateTodoOrderNumber,
+  const mutation = useMutation({
+    mutationFn: updateTodoOrders,
 
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
 
-      const previousTodos = queryClient.getQueryData<Page<Todo>>(['todos'])
+      const oldData = queryClient.getQueryData<Page<Todo>>(['todos'])
 
-      if (previousTodos) {
+      if (oldData) {
         const newData = {
-          ...previousTodos,
-          content: [...previousTodos.content],
+          ...oldData,
+          content: [...oldData.content],
         }
 
         queryClient.setQueryData(['todos'], newData)
       }
 
-      return { previousTodos }
+      return { oldData }
     },
+
     onError: (_error, _variables, context) => {
-      if (context?.previousTodos) {
-        queryClient.setQueryData(['todos'], context.previousTodos)
+      if (context?.oldData) {
+        queryClient.setQueryData(['todos'], context.oldData)
       }
     },
+
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['todos'],
@@ -75,8 +74,15 @@ export const TodoList: FC = () => {
     },
   })
 
-  const handleDrop = async (todoId: number, newOrderNumber: number) => {
-    updateOrderMutation.mutate({ todoId, newOrderNumber })
+  const handleDrop = async () => {
+    if (data) {
+      mutation.mutate(
+        data?.content.map((todo, index) => ({
+          id: todo.id,
+          orderNumber: data ? data.totalElements - 1 - index : 0,
+        })),
+      )
+    }
   }
 
   if (isLoading) {
@@ -118,40 +124,33 @@ export const TodoList: FC = () => {
               ? '검색 결과가 없습니다.'
               : '아직 작업이 없습니다. 작업을 추가해보세요.'}
           </span>
-          {!searchParams.get('search') && <CreateTodo />}
         </div>
       </div>
     )
   }
 
   return (
-    <div className='container m-2 mx-auto min-h-[calc(100vh-210px)] max-w-6xl p-2'>
-      <div className='mx-auto my-4 flex flex-col md:w-1/4'>
-        <CreateTodo />
-      </div>
-      <DndProvider backend={HTML5Backend}>
-        <Masonry
-          breakpointCols={{
-            default: 3,
-            860: 2,
-            500: 1,
-          }}
-          className='-ml-4 flex'
-          columnClassName='pl-4'
-        >
-          {data.content.map((todo, index) => (
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              index={index}
-              totalElements={data.totalElements}
-              moveTodo={moveTodo}
-              onDrop={handleDrop}
-            />
-          ))}
-        </Masonry>
-      </DndProvider>
-    </div>
+    <DndProvider backend={HTML5Backend}>
+      <Masonry
+        breakpointCols={{
+          default: 3,
+          860: 2,
+          500: 1,
+        }}
+        className='-ml-4 flex'
+        columnClassName='pl-4'
+      >
+        {data.content.map((todo, index) => (
+          <TodoItem
+            key={todo.id}
+            todo={todo}
+            index={index}
+            moveTodo={moveTodo}
+            onDrop={handleDrop}
+          />
+        ))}
+      </Masonry>
+    </DndProvider>
   )
 }
 

@@ -1,15 +1,17 @@
 import { API_URL } from '@/lib/constatns'
 import { customFetch } from '@/lib/custom-fetch'
-import { User } from '@/lib/types'
+import { User } from '@/lib/types.lib'
 
 const USER_BASE_URL = `${API_URL}/users`
 
-export const signUp = async (user: Partial<User>) => {
+export const signUp = async (
+  payload: Pick<User, 'nickname' | 'password' | 'username'>,
+) => {
   const url = `${USER_BASE_URL}/sign-up`
 
   const response = await customFetch(url, {
     method: 'POST',
-    body: JSON.stringify(user),
+    body: JSON.stringify(payload),
   })
 
   if (!response.ok) {
@@ -37,12 +39,12 @@ export const existsUsername = async (username: string) => {
   return data.exists as boolean
 }
 
-export const signIn = async (user: Partial<User>) => {
+export const signIn = async (payload: Pick<User, 'username' | 'password'>) => {
   const url = `${USER_BASE_URL}/sign-in`
 
   const response = await customFetch(url, {
     method: 'POST',
-    body: JSON.stringify(user),
+    body: JSON.stringify(payload),
     credentials: 'include',
   })
 
@@ -71,8 +73,8 @@ export const removeAccessToken = () => {
 
 export const isAuthenticated = getAccessToken() !== null
 
-export const fetchSession = async () => {
-  const url = `${USER_BASE_URL}/session`
+export const getAuthentication = async () => {
+  const url = `${USER_BASE_URL}/authentication`
 
   const response = await customFetch(url, {
     method: 'GET',

@@ -1,7 +1,7 @@
-import { useSessionQuery } from '@/hooks/use-session-query'
+import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { Input } from './ui/input'
+import { Input } from '../../components/ui/input'
 
 export const TodoSearch: FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -21,8 +21,8 @@ export const TodoSearch: FC = () => {
     }
   }, [searchTerm, setSearchParams])
 
-  const { sessionQuery } = useSessionQuery()
-  if (sessionQuery.isLoading || !sessionQuery.data) {
+  const { authenticationQuery } = useAuthenticationQuery()
+  if (authenticationQuery.isLoading || !authenticationQuery.data) {
     return
   }
 
