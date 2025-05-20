@@ -1,25 +1,26 @@
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
+import { Input } from '@/components/ui/input'
+import { useAuthenticationQuery } from '@/quries/use-authentication-query'
 import { ChangeEvent, FC, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router'
-import { Input } from '../../components/ui/input'
+import { useLocation, useNavigate } from 'react-router'
 
 export const TodoSearch: FC = () => {
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchParam, setSearchParams] = useSearchParams('')
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
-    const initialQuery = searchParam.get('search') || ''
+    const query = new URLSearchParams(location.search).get('q') || ''
 
-    setSearchTerm(initialQuery)
-  }, [searchParam])
+    setSearchTerm(query)
+  }, [location.search])
 
   useEffect(() => {
-    if (searchTerm) {
-      setSearchParams({ search: searchTerm })
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`)
     } else {
-      setSearchParams()
+      navigate('/')
     }
-  }, [searchTerm, setSearchParams])
+  }, [searchTerm, navigate])
 
   const { authenticationQuery } = useAuthenticationQuery()
   if (authenticationQuery.isLoading || !authenticationQuery.data) {

@@ -1,4 +1,4 @@
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
+import { useAuthenticationQuery } from '@/quries/use-authentication-query'
 import type { FC } from 'react'
 import { Badge } from '../ui/badge'
 

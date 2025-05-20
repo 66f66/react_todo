@@ -1,5 +1,5 @@
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
 import type { Role } from '@/lib/types.lib'
+import { useAuthenticationQuery } from '@/quries/use-authentication-query'
 import type { FC, ReactNode } from 'react'
 
 type HasRoleProps = {

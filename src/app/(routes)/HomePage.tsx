@@ -2,8 +2,8 @@ import { SignedInRoute } from '@/components/common/SignedInRoute'
 import { Button } from '@/components/ui/button'
 import { DialogTrigger } from '@radix-ui/react-dialog'
 import { type FC } from 'react'
-import { TodoFormDialog } from './TodoFormDialog'
-import { TodoList } from './TodoList'
+import { TodoFormDialog } from '../../components/TodoFormDialog'
+import { SortableTodoList } from './SortableTodoList'
 
 export const HomePage: FC = () => {
   return (
@@ -16,7 +16,7 @@ export const HomePage: FC = () => {
             </DialogTrigger>
           </TodoFormDialog>
         </div>
-        <TodoList />
+        <SortableTodoList />
       </div>
     </SignedInRoute>
   )

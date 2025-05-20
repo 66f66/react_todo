@@ -1,6 +1,6 @@
 import { SignedOut } from '@/components/common/SignedOut'
 import { UserButton } from '@/components/common/UserButton'
-import { useTodosQuery } from '@/hooks/use-todos-query'
+import { useTodosQuery } from '@/quries/use-todos-query'
 import { useIsMutating } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { FC } from 'react'

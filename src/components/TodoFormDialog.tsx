@@ -13,7 +13,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Page, Todo } from '@/lib/types.lib'
+import { Todo } from '@/lib/types.lib'
+import { TodosQueryData, TodosQueryKey } from '@/quries/use-todos-query'
 import { saveTodo } from '@/service/todo.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DialogTitle } from '@radix-ui/react-dialog'
@@ -67,22 +68,23 @@ export const TodoFormDialog: FC<TodoFormProps> = ({
   const mutation = useMutation({
     mutationFn: saveTodo,
 
-    mutationKey: ['todos', 'save'],
+    mutationKey: [TodosQueryKey, 'save'],
 
     onSuccess: async (data) => {
-      queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
+      queryClient.setQueryData<TodosQueryData>(TodosQueryKey, (oldData) => {
         if (!oldData) return oldData
 
         return {
           ...oldData,
-          content: defaultValues
-            ? oldData.content.map((todo) => (todo.id === data.id ? data : todo))
-            : [data, ...oldData.content],
+          pages: oldData.pages.map((page, index) => ({
+            ...page,
+            content: defaultValues
+              ? page.content.map((todo) => (todo.id === data.id ? data : todo))
+              : index === 0
+                ? [data, ...page.content]
+                : page.content,
+          })),
         }
-      })
-
-      toast(!id ? '새 작업을 추가했습니다 🎉' : '작업을 저장했습니다', {
-        description: data.title,
       })
 
       setOpen(false)

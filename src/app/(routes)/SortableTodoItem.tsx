@@ -20,23 +20,24 @@ import {
 } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DialogTrigger } from '@/components/ui/dialog'
-import { Page, Todo } from '@/lib/types.lib'
+import { Todo } from '@/lib/types.lib'
 import { cn } from '@/lib/utils'
+import { TodosQueryData, TodosQueryKey } from '@/quries/use-todos-query'
 import { deleteTodo, saveTodo } from '@/service/todo.service'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { toast } from 'sonner'
-import { TodoFormDialog } from './TodoFormDialog'
+import { TodoFormDialog } from '../../components/TodoFormDialog'
 
-type TodoItemProps = {
+type SoratableTodoItemProps = {
   todo: Todo
   index: number
   moveTodo: (dragIndex: number, hoverIndex: number) => void
   onDrop: () => void
 }
 
-export const TodoItem: FC<TodoItemProps> = ({
+export const SortableTodoItem: FC<SoratableTodoItemProps> = ({
   todo,
   index,
   moveTodo,
@@ -85,17 +86,20 @@ export const TodoItem: FC<TodoItemProps> = ({
   const mutation = useMutation({
     mutationFn: saveTodo,
 
-    mutationKey: ['todos', 'save'],
+    mutationKey: [TodosQueryKey, 'save'],
 
     onSuccess: (data) => {
-      queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
+      queryClient.setQueryData<TodosQueryData>(TodosQueryKey, (oldData) => {
         if (!oldData) return oldData
 
         return {
           ...oldData,
-          content: oldData.content.map((todo) =>
-            todo.id === data.id ? data : todo,
-          ),
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            content: page.content.map((todo) =>
+              todo.id === data.id ? data : todo,
+            ),
+          })),
         }
       })
 
@@ -190,15 +194,18 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
   const deleteMutation = useMutation({
     mutationFn: deleteTodo,
 
-    mutationKey: ['todos', 'delete'],
+    mutationKey: [TodosQueryKey, 'delete'],
 
     onSuccess: (_, deletedTodoId) => {
-      queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
+      queryClient.setQueryData<TodosQueryData>(TodosQueryKey, (oldData) => {
         if (!oldData) return oldData
 
         return {
           ...oldData,
-          content: oldData.content.filter((todo) => todo.id !== deletedTodoId),
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            content: page.content.filter((todo) => todo.id !== deletedTodoId),
+          })),
         }
       })
     },

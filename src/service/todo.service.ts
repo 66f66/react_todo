@@ -4,16 +4,16 @@ import { Page, Todo, UpdateOrderNumberRequest } from '@/lib/types.lib'
 
 const TODO_BASE_URL = `${API_URL}/todos`
 
-export const getTodos = async () => {
+export const getTodos = async (pageParam: number) => {
   const searchParams = new URLSearchParams(window.location.search)
 
-  const page = searchParams.get('page') || '0'
-  const search = searchParams.get('search')
-
   const params = new URLSearchParams()
-  params.append('page', page)
-  if (search) {
-    params.append('search', search)
+
+  params.append('page', pageParam.toString())
+
+  const q = searchParams.get('q')
+  if (q) {
+    params.append('q', q)
   }
 
   const url = `${TODO_BASE_URL}?${params.toString()}`

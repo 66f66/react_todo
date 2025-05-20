@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
+import { useAuthenticationQuery } from '@/quries/use-authentication-query'
+import { TodosQueryKey } from '@/quries/use-todos-query'
 import { signIn } from '@/service/user.service'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -35,7 +36,7 @@ export const AuthSignInPage: FC = () => {
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['todos'],
+        queryKey: TodosQueryKey,
       })
 
       const result = await authenticationQuery.refetch()

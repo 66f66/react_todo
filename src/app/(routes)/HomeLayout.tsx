@@ -1,5 +1,5 @@
 import { Navbar } from '@/app/(routes)/Navbar'
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
+import { useAuthenticationQuery } from '@/quries/use-authentication-query'
 import { Outlet } from 'react-router'
 
 export const HomeLayout = () => {

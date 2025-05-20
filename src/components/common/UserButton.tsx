@@ -1,4 +1,7 @@
-import { useAuthenticationQuery } from '@/hooks/use-authentication-query'
+import {
+  AuthenticationQueryKey,
+  useAuthenticationQuery,
+} from '@/quries/use-authentication-query'
 import { signOut } from '@/service/user.service'
 import { useQueryClient } from '@tanstack/react-query'
 import type { FC } from 'react'
@@ -21,7 +24,7 @@ export const UserButton: FC = () => {
     await signOut()
 
     queryClient.removeQueries({
-      queryKey: ['authentication'],
+      queryKey: AuthenticationQueryKey,
     })
 
     window.location.reload()
