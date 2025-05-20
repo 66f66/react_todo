@@ -8,6 +8,7 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import Masonry from 'react-masonry-css'
 import { useLocation, useSearchParams } from 'react-router'
+import { toast } from 'sonner'
 import { TodoItem } from './TodoItem'
 
 export const TodoList: FC = () => {
@@ -59,6 +60,10 @@ export const TodoList: FC = () => {
       }
 
       return { oldData }
+    },
+
+    onSuccess: () => {
+      toast('정렬을 저장했습니다')
     },
 
     onError: (_error, _variables, context) => {
