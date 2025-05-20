@@ -52,8 +52,6 @@ const TodosStatus: FC = () => {
     predicate: (mutation) => mutation.options.mutationKey?.[0] === 'todos',
   })
 
-  console.log(!isPending && !isMutating)
-
   if (!isPending && !isMutating) {
     return null
   }
