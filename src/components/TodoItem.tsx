@@ -29,20 +29,20 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { toast } from 'sonner'
 
-type SearchTodoItemProps = {
+type TodoItemProps = {
   todo: Todo
 }
 
-export const SearchTodoItem: FC<SearchTodoItemProps> = ({ todo }) => {
+export const TodoItem: FC<TodoItemProps> = ({ todo }) => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation({
     mutationFn: saveTodo,
 
-    mutationKey: [TodosQueryKey, 'save'],
+    mutationKey: [...TodosQueryKey, 'save'],
 
     onSuccess: (data) => {
-      queryClient.setQueryData<TodosQueryData>([TodosQueryKey], (oldData) => {
+      queryClient.setQueryData<TodosQueryData>(TodosQueryKey, (oldData) => {
         if (!oldData) return oldData
 
         return {
@@ -131,13 +131,13 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
 
   const queryClient = useQueryClient()
 
-  const deleteMutation = useMutation({
+  const mutation = useMutation({
     mutationFn: deleteTodo,
 
-    mutationKey: [TodosQueryKey, 'delete'],
+    mutationKey: [...TodosQueryKey, 'delete'],
 
     onSuccess: (_, deletedTodoId) => {
-      queryClient.setQueryData<TodosQueryData>([TodosQueryKey], (oldData) => {
+      queryClient.setQueryData<TodosQueryData>(TodosQueryKey, (oldData) => {
         if (!oldData) return oldData
 
         return {
@@ -158,7 +158,7 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
   })
 
   function handleDelete(id: number) {
-    deleteMutation.mutate(id)
+    mutation.mutate(id)
   }
 
   return (
@@ -187,12 +187,12 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
             취소
           </AlertDialogCancel>
           <Button
-            disabled={deleteMutation.isPending}
+            disabled={mutation.isPending}
             variant={'destructive'}
             className='hover:cursor-pointer'
             onClick={() => handleDelete(id)}
           >
-            {deleteMutation.isPending ? '처리중...' : '확인'}
+            {mutation.isPending ? '처리중...' : '확인'}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

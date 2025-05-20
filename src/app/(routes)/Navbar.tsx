@@ -1,6 +1,6 @@
 import { SignedOut } from '@/components/common/SignedOut'
 import { UserButton } from '@/components/common/UserButton'
-import { useTodosQuery } from '@/quries/use-todos-query'
+import { TodosQueryKey, useTodosQuery } from '@/quries/use-todos-query'
 import { useIsMutating } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { FC } from 'react'
@@ -49,7 +49,8 @@ const TodosStatus: FC = () => {
   } = useTodosQuery()
 
   const isMutating = useIsMutating({
-    predicate: (mutation) => mutation.options.mutationKey?.[0] === 'todos',
+    predicate: (mutation) =>
+      mutation.options.mutationKey?.[0] === TodosQueryKey[0],
   })
 
   if (!isPending && !isMutating) {

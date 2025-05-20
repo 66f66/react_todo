@@ -65,12 +65,12 @@ export const SortableTodoList: FC = () => {
   const mutation = useMutation({
     mutationFn: updateTodoOrders,
 
-    mutationKey: [TodosQueryKey, 'save-orders'],
+    mutationKey: [...TodosQueryKey, 'save-orders'],
 
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: [TodosQueryKey] })
+      await queryClient.cancelQueries({ queryKey: TodosQueryKey })
 
-      const oldData = queryClient.getQueryData<TodosQueryData>([TodosQueryKey])
+      const oldData = queryClient.getQueryData<TodosQueryData>(TodosQueryKey)
 
       if (oldData) {
         const newData = {
@@ -98,7 +98,7 @@ export const SortableTodoList: FC = () => {
   const debouncedHandleDrop = useDebouncedCallback((todos: Todo[]) => {
     const allTodos =
       queryClient
-        .getQueryData<TodosQueryData>([TodosQueryKey])
+        .getQueryData<TodosQueryData>(TodosQueryKey)
         ?.pages.flatMap((page) => page.content) || []
 
     mutation.mutate(

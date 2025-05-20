@@ -1,3 +1,4 @@
+import { TodoItem } from '@/components/TodoItem'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useTodosQuery } from '@/quries/use-todos-query'
 import { Loader } from 'lucide-react'
@@ -5,7 +6,6 @@ import { FC, useEffect } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
 import { useLocation } from 'react-router'
-import { SearchTodoItem } from './SearchTodoItem'
 
 export const SearchTodoList: FC = () => {
   const location = useLocation()
@@ -88,7 +88,7 @@ export const SearchTodoList: FC = () => {
         columnClassName='pl-4'
       >
         {allTodos.map((todo) => (
-          <SearchTodoItem
+          <TodoItem
             key={todo.id}
             todo={todo}
           />
