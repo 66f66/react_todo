@@ -66,12 +66,6 @@ export const TodoList: FC = () => {
         queryClient.setQueryData(['todos'], context.oldData)
       }
     },
-
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['todos'],
-      })
-    },
   })
 
   const handleDrop = async () => {
