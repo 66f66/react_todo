@@ -46,6 +46,8 @@ export const TodoList: FC = () => {
   const mutation = useMutation({
     mutationFn: updateTodoOrders,
 
+    mutationKey: ['todos', 'save-orders'],
+
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
 

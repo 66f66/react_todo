@@ -67,6 +67,8 @@ export const TodoFormDialog: FC<TodoFormProps> = ({
   const mutation = useMutation({
     mutationFn: saveTodo,
 
+    mutationKey: ['todos', 'save'],
+
     onSuccess: async (data) => {
       queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
         if (!oldData) return oldData

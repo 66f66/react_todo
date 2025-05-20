@@ -85,6 +85,8 @@ export const TodoItem: FC<TodoItemProps> = ({
   const mutation = useMutation({
     mutationFn: saveTodo,
 
+    mutationKey: ['todos', 'save'],
+
     onSuccess: (data) => {
       queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {
         if (!oldData) return oldData
@@ -109,8 +111,8 @@ export const TodoItem: FC<TodoItemProps> = ({
     },
   })
 
-  function onComplete(id: number, value: boolean) {
-    mutation.mutate({ id, completed: value })
+  function onComplete(value: boolean) {
+    mutation.mutate({ ...todo, completed: value })
   }
 
   return (
@@ -132,7 +134,7 @@ export const TodoItem: FC<TodoItemProps> = ({
           <Checkbox
             disabled={mutation.isPending}
             checked={todo.completed}
-            onCheckedChange={() => onComplete(todo.id, !todo.completed)}
+            onCheckedChange={() => onComplete(!todo.completed)}
           />
           <CardTitle
             className={cn(
@@ -187,6 +189,8 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
 
   const deleteMutation = useMutation({
     mutationFn: deleteTodo,
+
+    mutationKey: ['todos', 'delete'],
 
     onSuccess: (_, deletedTodoId) => {
       queryClient.setQueryData<Page<Todo>>(['todos'], (oldData) => {

@@ -1,6 +1,7 @@
 import { SignedOut } from '@/components/common/SignedOut'
 import { UserButton } from '@/components/common/UserButton'
 import { useTodosQuery } from '@/hooks/use-todos-query'
+import { useIsMutating } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
 import { FC } from 'react'
 import { Link } from 'react-router'
@@ -44,10 +45,16 @@ export const Navbar = () => {
 
 const TodosStatus: FC = () => {
   const {
-    todosQuery: { isFetching },
+    todosQuery: { isPending },
   } = useTodosQuery()
 
-  if (!isFetching) {
+  const isMutating = useIsMutating({
+    predicate: (mutation) => mutation.options.mutationKey?.[0] === 'todos',
+  })
+
+  console.log(!isPending && !isMutating)
+
+  if (!isPending && !isMutating) {
     return null
   }
 
