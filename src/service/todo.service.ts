@@ -9,7 +9,7 @@ export const getTodos = async ({
   q,
 }: {
   pageParam: number
-  q?: string
+  q: string
 }) => {
   const params = new URLSearchParams()
   params.append('page', pageParam.toString())

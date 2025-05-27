@@ -11,7 +11,7 @@ export const SearchTodoList: FC = () => {
   const location = useLocation()
 
   const {
-    searchTodosQuery: { isLoading, data, refetch, fetchNextPage, hasNextPage },
+    todosQuery: { isLoading, data, refetch, fetchNextPage, hasNextPage },
   } = useTodosQuery()
 
   useEffect(() => {

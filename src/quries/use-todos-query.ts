@@ -16,19 +16,7 @@ export const useTodosQuery = () => {
   const todosQuery = useInfiniteQuery({
     enabled: isAuthenticated,
     queryKey: TodosQueryKey,
-    queryFn: ({ pageParam = 0 }) => getTodos({ pageParam }),
-    retry: 2,
-    staleTime: Infinity,
-    getNextPageParam: (lastPage) => {
-      return lastPage.last ? undefined : lastPage.number + 1
-    },
-    initialPageParam: 0,
-  })
-
-  const searchTodosQuery = useInfiniteQuery({
-    enabled: isAuthenticated,
-    queryKey: TodosQueryKey,
-    queryFn: ({ pageParam = 0 }) => getTodos({ pageParam, q: searchQuery }),
+    queryFn: ({ pageParam }) => getTodos({ pageParam, q: searchQuery }),
     retry: 2,
     staleTime: Infinity,
     getNextPageParam: (lastPage) => {
@@ -39,6 +27,5 @@ export const useTodosQuery = () => {
 
   return {
     todosQuery,
-    searchTodosQuery,
   }
 }
