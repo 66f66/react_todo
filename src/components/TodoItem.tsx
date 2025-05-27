@@ -148,6 +148,8 @@ const DeleteTodoDialog: FC<DeleteTodoDialogProps> = ({ id }) => {
           })),
         }
       })
+
+      toast('작업을 삭제했습니다')
     },
 
     onError: (error) => {

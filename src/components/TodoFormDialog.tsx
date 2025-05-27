@@ -87,6 +87,10 @@ export const TodoFormDialog: FC<TodoFormProps> = ({
         }
       })
 
+      toast('작업을 저장했습니다 😊', {
+        description: data.title,
+      })
+
       setOpen(false)
     },
 

@@ -5,21 +5,20 @@ import { Loader } from 'lucide-react'
 import { FC, useEffect } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
-import { useLocation, useSearchParams } from 'react-router'
+import { useLocation } from 'react-router'
 
 export const SearchTodoList: FC = () => {
   const location = useLocation()
 
-  const [searchParams] = useSearchParams()
-  const searchQuery = searchParams.get('q') || ''
-
   const {
-    todosQuery: { isLoading, data, refetch, fetchNextPage, hasNextPage },
-  } = useTodosQuery(searchQuery)
+    searchTodosQuery: { isLoading, data, refetch, fetchNextPage, hasNextPage },
+  } = useTodosQuery()
 
   useEffect(() => {
-    refetch()
-  }, [location, refetch, searchParams])
+    if (location.search) {
+      refetch()
+    }
+  }, [refetch, location])
 
   if (isLoading) {
     return (
